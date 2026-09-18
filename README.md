@@ -45,3 +45,60 @@ Departments often track student skills informally, making it hard to quickly fin
 | Frontend | HTML, CSS, JavaScript |
 
 ## Project Structure
+
+```
+Skill-Share-Hub/
+├── Backend/            FastAPI app, models, schemas
+├── Frontend/           HTML pages, shared stylesheet, scripts
+├── Docs/               Capstone documentation
+├── .gitignore
+└── requirements.txt
+```
+
+## Installation
+
+```bash
+git clone https://github.com/jaganbprof168-source/Skill-Share-Hub.git
+cd Skill-Share-Hub
+python -m venv venv
+source venv/bin/activate     # venv\Scripts\activate on Windows
+pip install -r requirements.txt
+```
+
+## Database Setup
+
+```sql
+CREATE DATABASE skillshare_hub;
+```
+
+Set the connection string in the backend config:
+
+```python
+DATABASE_URL = "mysql+pymysql://username:password@localhost/skillshare_hub"
+```
+
+Tables (created automatically on first run):
+
+- **Students_info** — `rollno` (PK), `Name`, `Department`, `Year`, `Email`, `Skill`
+- **Skill_Sets** — `rollno` (FK), `Skill`
+
+## Running the Application
+
+```bash
+cd Backend
+uvicorn End:app --reload
+```
+
+Runs at `http://127.0.0.1:8000`; interactive docs at `/docs`. Open the frontend pages from `Frontend/` in a browser once the server is running.
+
+## API Reference
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/StudentsDetails` | Register a new student |
+| `GET` | `/Allstudentinfo` | List all students |
+| `GET` | `/parstudentinfo/{id}` | Fetch a student by roll number |
+| `PUT` | `/Update/{id}` | Update a student |
+| `DELETE` | `/DeleteStudentsinfo/{id}` | Remove a student and their skill entry |
+| `POST` | `/Skills` | Add a skill |
+| `GET` | `/Skillstudentinfo`
