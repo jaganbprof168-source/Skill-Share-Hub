@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Skill · SkillShare Hub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══════ HEADER ══════ -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="nav-logo">SkillShare Hub</a>
+    <nav>
+      <ul>
+        <li><a href="index.html"><img src="https://img.icons8.com/fluency/48/home.png" alt="Home"><span>Home</span></a></li>
+        <li><a href="register.html"><img src="https://img.icons8.com/fluency/48/add-user-male.png" alt="Register"><span>Register</span></a></li>
+        <li><a href="manage-students.html"><img src="https://img.icons8.com/fluency/48/conference-call.png" alt="Students"><span>Students</span></a></li>
+        <li><a href="add-skill.html" class="active"><img src="https://img.icons8.com/fluency/48/idea.png" alt="Add Skill"><span>Add Skill</span></a></li>
+        <li><a href="manage-skills.html"><img src="https://img.icons8.com/fluency/48/combo-chart.png" alt="Skills"><span>Skills</span></a></li>
+        <li><a href="student-profile.html"><img src="https://img.icons8.com/fluency/48/user-male-circle.png" alt="Profile"><span>Profile</span></a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- ══════ MAIN ══════ -->
+<main>
+  <div class="container">
+    <div class="page-hero">
+      <h1>Add Skill</h1>
+      <p>Link a new skill to an existing student using their roll number</p>
+    </div>
+
+    <div class="form-wrap">
+      <div class="card">
+        <table class="form-table">
+
+          <tr>
+            <td><label for="rollno">Roll Number</label></td>
+            <td><input type="number" id="rollno" ></td>
+          </tr>
+
+          <tr>
+            <td><label for="skill">Skill</label></td>
+            <td><input type="text" id="skill"></td>
+          </tr>
+
+          <tr class="btn-row">
+            <td colspan="2" style="text-align:center; padding-top:1.5rem;">
+              <button class="btn btn-primary" onclick="addSkill()">
+                ✨&nbsp; Add Skill
+              </button>
+            </td>
+          </tr>
+
+        </table>
+      </div>
+
+      <p style="text-align:center; color:var(--text-muted); font-size:0.85rem; margin-top:1.25rem;">
+        Student must be registered before adding a skill. &nbsp;
+        <a href="register.html" style="color:var(--purple); font-weight:700; text-decoration:none;">Register here →</a>
+      </p>
+    </div>
+  </div>
+</main>
+
+<!-- ══════ FOOTER ══════ -->
+<footer>
+  <ul>
+    <li><a href="index.html"><img src="https://img.icons8.com/fluency/48/home.png" alt="">Home</a></li>
+    <li><a href="register.html"><img src="https://img.icons8.com/fluency/48/add-user-male.png" alt="">Register</a></li>
+    <li><a href="manage-students.html"><img src="https://img.icons8.com/fluency/48/conference-call.png" alt="">Students</a></li>
+    <li><a href="add-skill.html"><img src="https://img.icons8.com/fluency/48/idea.png" alt="">Add Skill</a></li>
+    <li><a href="manage-skills.html"><img src="https://img.icons8.com/fluency/48/combo-chart.png" alt="">Skills</a></li>
+    <li><a href="student-profile.html"><img src="https://img.icons8.com/fluency/48/user-male-circle.png" alt="">Profile</a></li>
+  </ul>
+  <p class="footer-copy">SkillShare Hub &copy; 2025 &nbsp;·&nbsp; College Project</p>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+  const API = "http://127.0.0.1:8000";
+
+  function showToast(msg, type) {
+    let t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = "show " + (type || "");
+    setTimeout(() => { t.className = ""; }, 3000);
+  }
+
+  async function addSkill() {
+    let rollno = document.getElementById("rollno").value.trim();
+    let skill  = document.getElementById("skill").value.trim();
+
+    if (!rollno || !skill) {
+      showToast("⚠️ Please fill in all fields.", "error"); return;
+    }
+
+    try {
+      let res = await fetch(API + "/Skills", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rollno: parseInt(rollno), Skill: skill })
+      });
+
+      if (res.ok) {
+        showToast("✅ Skill added successfully!", "success");
+        document.getElementById("rollno").value = "";
+        document.getElementById("skill").value  = "";
+      } else {
+        let err = await res.json();
+        showToast("❌ " + (err.detail || "Failed to add skill."), "error");
+      }
+    } catch(e) {
+      showToast("❌ Could not connect to server.", "error");
+    }
+  }
+</script>
+</body>
+</html>

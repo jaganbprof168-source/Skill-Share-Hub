@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillShare Hub</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { overflow-x: hidden; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: calc(100vh - 64px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      position: relative;
+    }
+
+    /* decorative blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      pointer-events: none;
+    }
+    .blob-1 { width: 500px; height: 500px; background: #8B5CF6; top: -100px; left: -150px; }
+    .blob-2 { width: 400px; height: 400px; background: #3B82F6; bottom: -80px; right: -100px; }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(59,130,246,0.12));
+      border: 1.5px solid rgba(139,92,246,0.25);
+      color: var(--purple);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      margin-bottom: 1.5rem;
+      animation: fadeDown 0.5s ease both;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+      animation: fadeDown 0.6s ease 0.1s both;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--text-muted);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-bottom: 3.5rem;
+      animation: fadeDown 0.6s ease 0.2s both;
+    }
+
+    /* ── CARDS GRID ── */
+    .cards-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      justify-content: center;
+      max-width: 880px;
+      animation: fadeUp 0.7s ease 0.35s both;
+    }
+
+    .nav-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 2rem 1.75rem;
+      width: 240px;
+      text-decoration: none;
+      color: var(--text);
+      box-shadow: var(--shadow);
+      border: 1.5px solid rgba(139,92,246,0.07);
+      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gradient);
+      opacity: 0;
+      transition: opacity 0.3s;
+      border-radius: 20px;
+    }
+
+    .nav-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: var(--shadow-lg);
+      border-color: transparent;
+    }
+
+    .nav-card:hover::before { opacity: 1; }
+    .nav-card:hover .card-icon,
+    .nav-card:hover .card-title,
+    .nav-card:hover .card-desc { color: #fff; }
+
+    .card-icon {
+      font-size: 2.25rem;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+      transition: color 0.3s;
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      position: relative;
+      z-index: 1;
+      transition: color 0.3s;
+    }
+
+    .card-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 1;
+      transition: color 0.3s;
+    }
+
+    /* ── STATS ── */
+    .stats {
+      display: flex;
+      gap: 2.5rem;
+      justify-content: center;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.7s ease 0.5s both;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">SkillShare Hub</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="register.html">Register</a></li>
+      <li><a href="manage-students.html">Students</a></li>
+      <li><a href="add-skill.html">Add Skill</a></li>
+      <li><a href="manage-skills.html">Skills</a></li>
+      <li><a href="student-profile.html">Profile</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="badge">🎓 College Project · SkillShare Hub</div>
+
+  <h1>SkillShare Hub</h1>
+  <p class="hero-sub">Discover &nbsp;•&nbsp; Learn &nbsp;•&nbsp; Connect</p>
+
+  <div class="cards-grid">
+
+    <a href="register.html" class="nav-card">
+      <div class="card-icon">📝</div>
+      <div class="card-title">Register Student</div>
+      <div class="card-desc">Add a new student with their details and primary skill</div>
+    </a>
+
+    <a href="manage-students.html" class="nav-card">
+      <div class="card-icon">👥</div>
+      <div class="card-title">Manage Students</div>
+      <div class="card-desc">View, update, or remove student records</div>
+    </a>
+
+    <a href="add-skill.html" class="nav-card">
+      <div class="card-icon">✨</div>
+      <div class="card-title">Add Skill</div>
+      <div class="card-desc">Link a new skill to an existing student</div>
+    </a>
+
+    <a href="manage-skills.html" class="nav-card">
+      <div class="card-icon">🔍</div>
+      <div class="card-title">Manage Skills</div>
+      <div class="card-desc">Browse, search, and update skill records</div>
+    </a>
+
+    <a href="student-profile.html" class="nav-card">
+      <div class="card-icon">🪪</div>
+      <div class="card-title">Student Profile</div>
+      <div class="card-desc">Look up a student's full profile by roll number</div>
+    </a>
+
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="s-students">—</div>
+      <div class="stat-label">Students</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="s-skills">—</div>
+      <div class="stat-label">Skills Logged</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = "http://127.0.0.1:8000";
+
+  async function loadStats() {
+    try {
+      let r1 = await fetch(API + "/Allstudentinfo");
+      let students = await r1.json();
+      document.getElementById("s-students").textContent = students.length;
+
+      let r2 = await fetch(API + "/Skillstudentinfo");
+      let skills = await r2.json();
+      document.getElementById("s-skills").textContent = skills.length;
+    } catch(e) {
+      document.getElementById("s-students").textContent = "—";
+      document.getElementById("s-skills").textContent = "—";
+    }
+  }
+
+  loadStats();
+</script>
+
+</body>
+</html>

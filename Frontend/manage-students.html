@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Students · SkillShare Hub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══════ HEADER ══════ -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="nav-logo">SkillShare Hub</a>
+    <nav>
+      <ul>
+        <li><a href="index.html"><img src="https://img.icons8.com/fluency/48/home.png" alt="Home"><span>Home</span></a></li>
+        <li><a href="register.html"><img src="https://img.icons8.com/fluency/48/add-user-male.png" alt="Register"><span>Register</span></a></li>
+        <li><a href="manage-students.html" class="active"><img src="https://img.icons8.com/fluency/48/conference-call.png" alt="Students"><span>Students</span></a></li>
+        <li><a href="add-skill.html"><img src="https://img.icons8.com/fluency/48/idea.png" alt="Add Skill"><span>Add Skill</span></a></li>
+        <li><a href="manage-skills.html"><img src="https://img.icons8.com/fluency/48/combo-chart.png" alt="Skills"><span>Skills</span></a></li>
+        <li><a href="student-profile.html"><img src="https://img.icons8.com/fluency/48/user-male-circle.png" alt="Profile"><span>Profile</span></a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- ══════ MAIN ══════ -->
+<main>
+  <div class="container">
+    <div class="page-hero">
+      <h1>Manage Students</h1>
+      <p>View, edit, or remove student records from the hub</p>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <h2>All Students</h2>
+        <button class="btn btn-secondary" onclick="loadStudents()">↻ &nbsp;Refresh</button>
+      </div>
+
+      <div id="loading" class="loader"><div class="spinner"></div>&nbsp; Loading students…</div>
+
+      <div class="table-wrap" id="table-area" style="display:none;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Roll No</th>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Year</th>
+              <th>Email</th>
+              <th>Skill</th>
+              <th>Update</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="student-tbody"></tbody>
+        </table>
+      </div>
+
+      <div id="empty" class="empty-state" style="display:none;">
+        <div class="icon">👥</div>
+        <p>No students registered yet.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ══════ FOOTER ══════ -->
+<footer>
+  <ul>
+    <li><a href="index.html"><img src="https://img.icons8.com/fluency/48/home.png" alt="">Home</a></li>
+    <li><a href="register.html"><img src="https://img.icons8.com/fluency/48/add-user-male.png" alt="">Register</a></li>
+    <li><a href="manage-students.html"><img src="https://img.icons8.com/fluency/48/conference-call.png" alt="">Students</a></li>
+    <li><a href="add-skill.html"><img src="https://img.icons8.com/fluency/48/idea.png" alt="">Add Skill</a></li>
+    <li><a href="manage-skills.html"><img src="https://img.icons8.com/fluency/48/combo-chart.png" alt="">Skills</a></li>
+    <li><a href="student-profile.html"><img src="https://img.icons8.com/fluency/48/user-male-circle.png" alt="">Profile</a></li>
+  </ul>
+  <p class="footer-copy">SkillShare Hub &copy; 2025 &nbsp;·&nbsp; College Project</p>
+</footer>
+
+<!-- UPDATE MODAL -->
+<div class="modal-overlay" id="update-modal">
+  <div class="modal">
+    <h3>✏️ Update Student</h3>
+    <input type="hidden" id="u-id">
+    <table class="form-table">
+      <tr>
+        <td><label>Roll No</label></td>
+        <td><input type="number" id="u-rollno"></td>
+      </tr>
+      <tr>
+        <td><label>Name</label></td>
+        <td><input type="text" id="u-name"></td>
+      </tr>
+      <tr>
+        <td><label>Department</label></td>
+        <td><input type="text" id="u-dept"></td>
+      </tr>
+      <tr>
+        <td><label>Year</label></td>
+        <td>
+          <select id="u-year">
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td><label>Email</label></td>
+        <td><input type="email" id="u-email"></td>
+      </tr>
+      <tr>
+        <td><label>Skill</label></td>
+        <td><input type="text" id="u-skill"></td>
+      </tr>
+    </table>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('update-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveUpdate()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <h3>🗑️ Confirm Delete</h3>
+    <p style="text-align:center; color:var(--text-muted); font-size:0.95rem; margin-bottom:0.5rem;">
+      Are you sure you want to delete this student?<br>This action cannot be undone.
+    </p>
+    <input type="hidden" id="d-id">
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('delete-modal')">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const API = "http://127.0.0.1:8000";
+
+  function showToast(msg, type) {
+    let t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = "show " + (type || "");
+    setTimeout(() => { t.className = ""; }, 3000);
+  }
+
+  function show(which) {
+    document.getElementById("loading").style.display    = which === "loading" ? "flex" : "none";
+    document.getElementById("table-area").style.display = which === "table"   ? "block" : "none";
+    document.getElementById("empty").style.display      = which === "empty"   ? "block" : "none";
+  }
+
+  async function loadStudents() {
+    show("loading");
+    try {
+      let res  = await fetch(API + "/Allstudentinfo");
+      let data = await res.json();
+      renderTable(data);
+    } catch(e) {
+      showToast("❌ Could not load students.", "error");
+      show("empty");
+    }
+  }
+
+  function renderTable(students) {
+    let tbody = document.getElementById("student-tbody");
+    tbody.innerHTML = "";
+    if (!students || students.length === 0) { show("empty"); return; }
+    show("table");
+
+    for (let s of students) {
+      let tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><strong>${s.rollno}</strong></td>
+        <td>${s.Name}</td>
+        <td>${s.Department}</td>
+        <td>Year ${s.Year}</td>
+        <td>${s.Email}</td>
+        <td><span class="skill-badge">${s.Skill}</span></td>
+        <td><button class="btn btn-secondary btn-sm" onclick='openUpdate(${JSON.stringify(s)})'>✏️ Edit</button></td>
+        <td><button class="btn btn-danger btn-sm" onclick="openDelete(${s.rollno})">🗑️ Delete</button></td>
+      `;
+      tbody.append(tr);
+    }
+  }
+
+  function openUpdate(s) {
+    document.getElementById("u-id").value     = s.rollno;
+    document.getElementById("u-rollno").value = s.rollno;
+    document.getElementById("u-name").value   = s.Name;
+    document.getElementById("u-dept").value   = s.Department;
+    document.getElementById("u-year").value   = s.Year;
+    document.getElementById("u-email").value  = s.Email;
+    document.getElementById("u-skill").value  = s.Skill;
+    document.getElementById("update-modal").classList.add("open");
+  }
+
+  function openDelete(id) {
+    document.getElementById("d-id").value = id;
+    document.getElementById("delete-modal").classList.add("open");
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove("open");
+  }
+
+  async function saveUpdate() {
+    let id    = document.getElementById("u-id").value;
+    let rollno = document.getElementById("u-rollno").value;
+    let name  = document.getElementById("u-name").value.trim();
+    let dept  = document.getElementById("u-dept").value.trim();
+    let year  = document.getElementById("u-year").value;
+    let email = document.getElementById("u-email").value.trim();
+    let skill = document.getElementById("u-skill").value.trim();
+
+    if (!rollno || !name || !dept || !year || !email || !skill) {
+      showToast("⚠️ All fields are required.", "error"); return;
+    }
+
+    try {
+      let res = await fetch(API + "/Update/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rollno: parseInt(rollno), Name: name, Department: dept, Year: year, Email: email, Skill: skill })
+      });
+      if (res.ok) {
+        showToast("✅ Student updated!", "success");
+        closeModal("update-modal");
+        loadStudents();
+      } else {
+        showToast("❌ Update failed.", "error");
+      }
+    } catch(e) { showToast("❌ Connection error.", "error"); }
+  }
+
+  async function confirmDelete() {
+    let id = document.getElementById("d-id").value;
+    try {
+      let res = await fetch(API + "/DeleteStudentsinfo/" + id, { method: "DELETE" });
+      if (res.ok) {
+        showToast("🗑️ Student deleted.", "success");
+        closeModal("delete-modal");
+        loadStudents();
+      } else {
+        showToast("❌ Delete failed.", "error");
+      }
+    } catch(e) { showToast("❌ Connection error.", "error"); }
+  }
+
+  // close on overlay click
+  document.querySelectorAll(".modal-overlay").forEach(function(overlay) {
+    overlay.addEventListener("click", function(e) {
+      if (e.target === this) this.classList.remove("open");
+    });
+  });
+
+  loadStudents();
+</script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Skills · SkillShare Hub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══════ HEADER ══════ -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="nav-logo">SkillShare Hub</a>
+    <nav>
+      <ul>
+        <li><a href="index.html"><img src="https://img.icons8.com/fluency/48/home.png" alt="Home"><span>Home</span></a></li>
+        <li><a href="register.html"><img src="https://img.icons8.com/fluency/48/add-user-male.png" alt="Register"><span>Register</span></a></li>
+        <li><a href="manage-students.html"><img src="https://img.icons8.com/fluency/48/conference-call.png" alt="Students"><span>Students</span></a></li>
+        <li><a href="add-skill.html"><img src="https://img.icons8.com/fluency/48/idea.png" alt="Add Skill"><span>Add Skill</span></a></li>
+        <li><a href="manage-skills.html" class="active"><img src="https://img.icons8.com/fluency/48/combo-chart.png" alt="Skills"><span>Skills</span></a></li>
+        <li><a href="student-profile.html"><img src="https://img.icons8.com/fluency/48/user-male-circle.png" alt="Profile"><span>Profile</span></a></li>
+      </ul>
+    </nav>
+  </div>
+</header>                                                            
+
+<!-- ══════ MAIN ══════ -->
+<main>
+  <div class="container">
+    <div class="page-hero">
+      <h1>Manage Skills</h1>
+      <p>Browse, search, and update student skill records</p>
+    </div>
+
+    <div class="card">
+      <!-- Search -->
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Search by skill name…">
+        <button class="btn btn-primary" onclick="searchSkills()">🔍 &nbsp;Search</button>
+        <button class="btn btn-secondary" onclick="loadAllSkills()">Show All</button>
+      </div>
+
+      <div id="loading" class="loader"><div class="spinner"></div>&nbsp; Loading skills…</div>
+
+      <div class="table-wrap" id="table-area" style="display:none;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Roll No</th>
+              <th>Skill</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="skill-tbody"></tbody>
+        </table>
+      </div>
+
+      <div id="empty" class="empty-state" style="display:none;">
+        <div class="icon">✨</div>
+        <p>No skills found.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ══════ FOOTER ══════ -->
+<footer>
+  <ul>
+    <li><a href="index.html"><img src="https://img.icons8.com/fluency/48/home.png" alt="">Home</a></li>
+    <li><a href="register.html"><img src="https://img.icons8.com/fluency/48/add-user-male.png" alt="">Register</a></li>
+    <li><a href="manage-students.html"><img src="https://img.icons8.com/fluency/48/conference-call.png" alt="">Students</a></li>
+    <li><a href="add-skill.html"><img src="https://img.icons8.com/fluency/48/idea.png" alt="">Add Skill</a></li>
+    <li><a href="manage-skills.html"><img src="https://img.icons8.com/fluency/48/combo-chart.png" alt="">Skills</a></li>
+    <li><a href="student-profile.html"><img src="https://img.icons8.com/fluency/48/user-male-circle.png" alt="">Profile</a></li>
+  </ul>
+  <p class="footer-copy">SkillShare Hub &copy; 2025 &nbsp;·&nbsp; College Project</p>
+</footer>
+
+<!-- UPDATE SKILL MODAL -->
+<div class="modal-overlay" id="update-modal">
+  <div class="modal">
+    <h3>✏️ Update Skill</h3>
+    <input type="hidden" id="u-id">
+    <table class="form-table">
+      <tr>
+        <td><label>Roll No</label></td>
+        <td><input type="number" id="u-rollno"></td>
+      </tr>
+      <tr>
+        <td><label>Skill</label></td>
+        <td><input type="text" id="u-skill"></td>
+      </tr>
+    </table>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveUpdate()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const API = "http://127.0.0.1:8000";
+
+  function showToast(msg, type) {
+    let t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = "show " + (type || "");
+    setTimeout(() => { t.className = ""; }, 3000);
+  }
+
+  function show(which) {
+    document.getElementById("loading").style.display    = which === "loading" ? "flex"  : "none";
+    document.getElementById("table-area").style.display = which === "table"   ? "block" : "none";
+    document.getElementById("empty").style.display      = which === "empty"   ? "block" : "none";
+  }
+
+  async function loadAllSkills() {
+    document.getElementById("search-input").value = "";
+    show("loading");
+    try {
+      let res  = await fetch(API + "/Skillstudentinfo");
+      let data = await res.json();
+      renderTable(data);
+    } catch(e) {
+      showToast("❌ Could not load skills.", "error"); show("empty");
+    }
+  }
+
+  async function searchSkills() {
+    let q = document.getElementById("search-input").value.trim();
+    if (!q) { loadAllSkills(); return; }
+    show("loading");
+    try {
+      let res  = await fetch(API + "/Skillstudentinfo/" + encodeURIComponent(q));
+      let data = await res.json();
+      renderTable(data);
+    } catch(e) {
+      showToast("❌ Search failed.", "error"); show("empty");
+    }
+  }
+
+  document.getElementById("search-input").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") searchSkills();
+  });
+
+  function renderTable(skills) {
+    let tbody = document.getElementById("skill-tbody");
+    tbody.innerHTML = "";
+    if (!skills || skills.length === 0) { show("empty"); return; }
+    show("table");
+    for (let s of skills) {
+      let tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><strong>${s.rollno}</strong></td>
+        <td><span class="skill-badge">${s.Skill}</span></td>
+        <td><button class="btn btn-secondary btn-sm" onclick='openUpdate(${JSON.stringify(s)})'>✏️ Edit</button></td>
+      `;
+      tbody.append(tr);
+    }
+  }
+
+  function openUpdate(s) {
+    document.getElementById("u-id").value     = s.rollno;
+    document.getElementById("u-rollno").value = s.rollno;
+    document.getElementById("u-skill").value  = s.Skill;
+    document.getElementById("update-modal").classList.add("open");
+  }
+
+  function closeModal() {
+    document.getElementById("update-modal").classList.remove("open");
+  }
+
+  async function saveUpdate() {
+    let id     = document.getElementById("u-id").value;
+    let rollno = document.getElementById("u-rollno").value;
+    let skill  = document.getElementById("u-skill").value.trim();
+    if (!rollno || !skill) { showToast("⚠️ Fill in all fields.", "error"); return; }
+    try {
+      let res = await fetch(API + "/UpdateSkill/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rollno: parseInt(rollno), Skill: skill })
+      });
+      if (res.ok) {
+        showToast("✅ Skill updated!", "success");
+        closeModal(); loadAllSkills();
+      } else { showToast("❌ Update failed.", "error"); }
+    } catch(e) { showToast("❌ Connection error.", "error"); }
+  }
+
+  document.getElementById("update-modal").addEventListener("click", function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  loadAllSkills();
+</script>
+</body>
+</html>
