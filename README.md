@@ -101,4 +101,22 @@ Runs at `http://127.0.0.1:8000`; interactive docs at `/docs`. Open the frontend 
 | `PUT` | `/Update/{id}` | Update a student |
 | `DELETE` | `/DeleteStudentsinfo/{id}` | Remove a student and their skill entry |
 | `POST` | `/Skills` | Add a skill |
-| `GET` | `/Skillstudentinfo`
+| `GET` | `/Skillstudentinfo` | List all skills |
+| `GET` | `/Skillstudentinfo/{ques}` | Search skills by keyword |
+| `PUT` | `/UpdateSkill/{id}` | Update a skill entry |
+
+## Future Scope
+
+- Authentication for the Portal for Officials
+- Skill endorsements verified by faculty
+- CSV export of filtered results
+- Hosted deployment
+
+## License
+
+This project is licensed under the MIT License — you are free to use, copy, modify, and distribute this code, provided the original copyright notice is retained.
+
+## Author
+
+**Jagan B**
+BSc Information Technology, Sri Krishna Arts and Science College, Coimbatore
