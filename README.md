@@ -1,13 +1,8 @@
-A SYSTEM FOR STUDENT SKILL MANAGEMENT
-___________________________________________________
-A full-stack college project for managing and showcasing student skills using FastAPI, MySQL, SQLAlchemy, HTML, CSS, and JavaScript. Second year first project(Capstone).
+Skill-Share-Hub
 
-[![version](https://img.shields.io/badge/version-1.0.0-brightgreen)](https://github.com/jaganbprof168-source/Skill-Share-Hub/releases/tag/v1.0.0)
-[![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+A FastAPI-based backend and frontend for a student skill registration and lookup system, built as a college capstone project.
 
-
+version license
 
 Table of Contents
 Description
