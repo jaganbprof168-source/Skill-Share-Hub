@@ -2,7 +2,7 @@ Skill-Share-Hub
 
 A FastAPI-based backend and frontend for a student skill registration and lookup system, built as a college capstone project.
 
-version license
+Show Image Show Image
 
 Table of Contents
 Description
